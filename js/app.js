@@ -137,19 +137,18 @@ var Calculadora = {
 
   //Función para imprimir cualquier texto en pantalla
   escribirPantalla: function(texto){
-    if(texto.replace(".","").replace("-","").length<=8){
+    console.log("Imprimiendo: " + texto);
 
-      var cantCaracteres = 8;
+    var cantCaracteres = 8;
 
-      if(texto.includes(".")){
-        cantCaracteres++;
-      }
-      if(texto.includes("-")){
-        cantCaracteres++;
-      }
-
-      pantalla.innerHTML=texto.substring(0,cantCaracteres);
+    if(texto.includes(".")){
+      cantCaracteres++;
     }
+    if(texto.includes("-")){
+      cantCaracteres++;
+    }
+
+    pantalla.innerHTML=texto.substring(0,cantCaracteres);
   },
 
   //Función que se ejecuta al hacer clic en un botón de número, punto o signo negativo
@@ -170,6 +169,9 @@ var Calculadora = {
           this.escribirPantalla("-" + texto);
         }
       }
+    }
+    else if(texto==0 && texto.includes(".")){
+      this.escribirPantalla(texto + num);
     }
     else if(texto==0 && num!=0){
       this.escribirPantalla(num);
