@@ -1,16 +1,17 @@
 var Calculadora = {
   pantalla: {},
-  self: this,
   operador1: "",
   operador2: "",
   resultado: "",
   operacion: "",
+  repeticionOperacion: false,
 
   init: function(){
     pantalla = document.getElementById("display");
     this.inicializaTecladoPantalla();
   },
 
+  //Función para asignar los eventos de los botones de tecla
   inicializaTecladoPantalla: function(){
     console.log("inicializando teclado en pantalla");
     var teclas = document.getElementsByClassName("tecla");
@@ -26,6 +27,7 @@ var Calculadora = {
   //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
   //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
+  //Evento que se ejecuta al presionar una tecla y disminuye las dimensiones
   eventoOprimirTecla: function(event){
     if (event.target.id == "mas") {
       event.target.style.height = "99%";
@@ -35,6 +37,7 @@ var Calculadora = {
       event.target.style.width = "77.0667px";
     }
   },
+  //Evento que se ejecuta al soltar una tecla y restablece las dimensiones
   eventoLiberarTecla: function(event){
     if (event.target.id == "mas") {
       event.target.style.height = "100%";
@@ -45,6 +48,8 @@ var Calculadora = {
     }
   },
 
+  //Evento para todas las teclas
+  //Dependiendo de la tecla oprimida se ejecutará la función adecuada
   eventoClickTeclas: function(event){
 
     console.log("Click registrado: " + event.target.id);
@@ -72,30 +77,66 @@ var Calculadora = {
       case "menos":
       case "por":
       case "dividido":
-
+        Calculadora.botonOperacion(target.id);
         break;
       case "igual":
-
+        Calculadora.botonIgual();
         break;
-      default:
     }
   },
 
+  //Evento que se ejecuta cuando se hace clic en el botón ON/C
   botonON: function(event){
     Calculadora.escribirPantalla("0");
     console.clear();
   },
-  botonIgual: function(){
+  //Evento que se ejecuta cuando se hace clic en un botón de operación aritmética
+  botonOperacion: function(operacion){
+    var texto = pantalla.innerHTML;
 
+    Calculadora.operador1 = texto;
+    Calculadora.operacion = operacion;
+    Calculadora.repeticionOperacion = false;
+    this.escribirPantalla("");
+  },
+  //Evento que se ejecuta al hacer clic en el botón igual
+  botonIgual: function(){
+    var texto = pantalla.innerHTML;
+
+    //Lógica que permite la secuencia de operaciones al presionar el botón =
+    if(Calculadora.repeticionOperacion){
+      Calculadora.operador1 = Calculadora.resultado;
+    }else{
+      Calculadora.operador2 = texto;
+    }
+
+    Calculadora.repeticionOperacion = true;
+
+    switch (Calculadora.operacion) {
+      case "mas":
+        Calculadora.resultado = parseFloat(Calculadora.operador1) + parseFloat(Calculadora.operador2);
+        break;
+      case "menos":
+        Calculadora.resultado = parseFloat(Calculadora.operador1) - parseFloat(Calculadora.operador2);
+        break;
+      case "por":
+        Calculadora.resultado = parseFloat(Calculadora.operador1) * parseFloat(Calculadora.operador2);
+        break;
+      case "dividido":
+        Calculadora.resultado = parseFloat(Calculadora.operador1) / parseFloat(Calculadora.operador2);
+        break;
+    }
+
+    console.log("Resultado: " + Calculadora.resultado);
+    this.escribirPantalla("" + Calculadora.resultado);
   },
 
   //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
   //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
   //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 
+  //Función para imprimir cualquier texto en pantalla
   escribirPantalla: function(texto){
-    console.log("largo" + texto.replace(".","").length);
-
     if(texto.replace(".","").replace("-","").length<=8){
 
       var cantCaracteres = 8;
@@ -110,6 +151,8 @@ var Calculadora = {
       pantalla.innerHTML=texto.substring(0,cantCaracteres);
     }
   },
+
+  //Función que se ejecuta al hacer clic en un botón de número, punto o signo negativo
   introducirNumeros: function(num){
     var texto = pantalla.innerHTML;
 
@@ -138,5 +181,5 @@ var Calculadora = {
   }
 };
 
-
+//Inicializa los eventos y las propiedades del objeto Calculadora
 Calculadora.init();
